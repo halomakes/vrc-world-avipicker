@@ -1,6 +1,8 @@
 # Udon Avatar Picker
 Paginated avatar picker to show off your and your friends' avatars!
 
+![VRChat_2023-09-06_19-29-45 565_7680x4320](https://github.com/halomakes/vrc-world-avipicker/assets/5904472/708278ff-9bd7-4756-84ce-6c456129f3b5)
+
 ## Usage
 On the Avatar Picker component put your list of avatars in this format:
 ```json
