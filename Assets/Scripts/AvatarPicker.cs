@@ -1,16 +1,17 @@
-﻿using System.Security.AccessControl;
-using UdonSharp;
+﻿using UdonSharp;
 using UnityEngine;
 using UnityEngine.UI;
 using VRC.SDK3.Components;
 using VRC.SDK3.Data;
+using VRC.SDK3.StringLoading;
+using VRC.SDKBase;
+using VRC.Udon.Common.Interfaces;
 
 [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
 public class AvatarPicker : UdonSharpBehaviour
 {
     [SerializeField]
-    [TextArea]
-    private string avatarDefinitions;
+    VRCUrl feedUrl = new VRCUrl(@"https://raw.githubusercontent.com/Rider-UwU-Black/Avatar-IDs/main/Avatars.json");
 
     [SerializeField]
     private Text errorMessage;
@@ -36,12 +37,24 @@ public class AvatarPicker : UdonSharpBehaviour
     private string author = null;
     private int pages = 1;
 
+
     void Start()
     {
-        DeserializeList();
+        VRCStringDownloader.LoadUrl(feedUrl, (IUdonEventReceiver)this);
     }
 
-    private void DeserializeList()
+    public override void OnStringLoadSuccess(IVRCStringDownload result)
+    {
+        Debug.Log($"Downloaded {result.Url}");
+        DeserializeList(result.Result);
+    }
+
+    public override void OnStringLoadError(IVRCStringDownload result)
+    {
+        ShowError("Couldn't download avatar list");
+    }
+
+    private void DeserializeList(string avatarDefinitions)
     {
         if (VRCJson.TryDeserializeFromJson(avatarDefinitions, out var deserializedJson) && deserializedJson.TokenType == TokenType.DataDictionary)
         {
@@ -116,7 +129,7 @@ public class AvatarPicker : UdonSharpBehaviour
                 pedestal.gameObject.SetActive(false);
             }
         }
-        
+
         UpdateLabels();
     }
 
